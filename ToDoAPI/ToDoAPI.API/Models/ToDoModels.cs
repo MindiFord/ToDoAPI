@@ -21,8 +21,8 @@ namespace ToDoAPI.API.Models
         [Required]
         public int CategoryId { get; set; }
 
-        public virtual Category Category { get; set; }
-
+        public virtual CategoryViewModel Category { get; set; }
+        public string Details { get; set; }
     }
 
     public class CategoryViewModel

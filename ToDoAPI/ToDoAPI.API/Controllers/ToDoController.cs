@@ -17,31 +17,32 @@ namespace ToDoAPI.API.Controllers
 
         ToDoEntities db = new ToDoEntities();
 
-        public IHttpActionResult GetToDo()
+        public IHttpActionResult GetToDos()
         {
-            List<ToDoViewModel> toDo = db.TodoItems.Include("Category").Select(t => new ToDoViewModel()
+            List<ToDoViewModel> todos = db.TodoItems.Include("TodoItem").Select(t => new ToDoViewModel()
             {
                 TodoId = t.TodoId,
                 Action = t.Action,
+                Details = t.Details,
                 Done = t.Done,
-                CategoryId = t.CategoryId//,
-                //Category = new CategoryViewModel()
-                //{
-                //    CategoryId = t.Category.CategoryId,
-                //    Name = t.Category.Name,
-                //    Description = t.Category.Description
-                //}
+                CategoryId = t.CategoryId,
+                Category = new CategoryViewModel()
+                {
+                    CategoryId = t.Category.CategoryId,
+                    Name = t.Category.Name,
+                    Description = t.Category.Description
+                }
 
             }).ToList();
 
-            if (toDo.Count == 0)
+            if (todos.Count == 0)
             {
                 return NotFound(); // 404 Error
             }
 
-            return Ok(toDo); // 200 sucess code and pass todo into the Ok response
+            return Ok(todos); // 200 sucess code and pass todo into the Ok response
 
-        } // End GetTodo()
+        } // End GetTodos()
 
         // api/todo/id - Get Todo (READ)
         public IHttpActionResult GetTodo(int id)
@@ -50,8 +51,15 @@ namespace ToDoAPI.API.Controllers
             {
                 TodoId = t.TodoId,
                 Action = t.Action,
+                Details = t.Details,
                 Done = t.Done,
-                CategoryId = t.CategoryId
+                CategoryId = t.CategoryId,
+                Category = new CategoryViewModel()
+                {
+                    CategoryId = t.Category.CategoryId,
+                    Name = t.Category.Name,
+                    Description = t.Category.Description
+                }
             }).FirstOrDefault();
 
             if (todo == null)
@@ -74,6 +82,7 @@ namespace ToDoAPI.API.Controllers
             {
 
                 Action = todo.Action,
+                Details = todo.Details,
                 Done = todo.Done,
                 CategoryId = todo.CategoryId
             };
@@ -81,7 +90,7 @@ namespace ToDoAPI.API.Controllers
             db.TodoItems.Add(newTodoItem);
             db.SaveChanges();
             return Ok(newTodoItem);
-        } // End PostTodo
+        } // End PostTodo()
 
         // PUT = Edit
         // api/todo (HttpPut)
@@ -98,6 +107,7 @@ namespace ToDoAPI.API.Controllers
             {
                 existingTodo.TodoId = todo.TodoId;
                 existingTodo.Action = todo.Action;
+                existingTodo.Details = todo.Details;
                 existingTodo.Done = todo.Done;
                 existingTodo.CategoryId = todo.CategoryId;
                 db.SaveChanges();
